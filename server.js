@@ -21,6 +21,6 @@ app.post('/messages', (req, res) => {
   res.sendStatus(200);
 });
 
-var server = http.listen(3000, () => {
+var server = http.listen(4200, () => {
   console.log('server started on port', server.address().port);
 });
