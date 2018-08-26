@@ -1,0 +1,23 @@
+{
+  "name": "jabberin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devInProgress/jabberin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devInProgress/jabberin/issues"
+  },
+  "homepage": "https://github.com/devInProgress/jabberin#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
