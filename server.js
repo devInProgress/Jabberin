@@ -12,22 +12,33 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 const dbUrl = 'mongodb://naved1234:n%40ved786@ds131942.mlab.com:31942/db-node';
 
-let messages = [{name: 'Tim', message: 'Hi'}, {name: 'Jane', message: 'Hello'}];
+const Message = mongoose.model('Message', {
+  name: String,
+  message: String
+});
 
 app.get('/messages', (req, res) => {
-  res.send(messages);
+  Message.find({}, (err, messages) => {
+    res.send(messages);
+  });
 });
 
 app.post('/messages', (req, res) => {
-  messages.push(req.body);
-  io.emit('message', req.body);
-  res.sendStatus(200);
+  const message = new Message(req.body);
+  message.save((err) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      io.emit('message', req.body);
+      res.sendStatus(200);
+    }
+  });
 });
 
 mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
-  console.log('mongo db connection', err);
+  err ? console.log(err) : console.log('Connected to MongoDB');
 });
 
-var server = http.listen(3030, () => {
+var server = http.listen(3038, () => {
   console.log('server started on port', server.address().port);
 });
