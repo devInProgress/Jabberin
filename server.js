@@ -39,6 +39,6 @@ mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
   err ? console.log(err) : console.log('Connected to MongoDB');
 });
 
-var server = http.listen(3038, () => {
+var server = http.listen(3000, () => {
   console.log('server started on port', server.address().port);
 });
