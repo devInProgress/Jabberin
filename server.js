@@ -6,6 +6,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const mongoose = require('mongoose');
 
+mongoose.Promise = Promise;
+
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -25,14 +27,23 @@ app.get('/messages', (req, res) => {
 
 app.post('/messages', (req, res) => {
   const message = new Message(req.body);
-  message.save((err) => {
-    if (err) {
-      res.sendStatus(500);
-    } else {
+  message.save()
+    .then(() => {
+      console.log('Message Saved');
+      return Message.findOne({message: 'badword'});
+    })
+    .then(censored => {
+      if (censored) {
+        console.log(censored);
+        return Message.remove({_id: censored._id});
+      }
       io.emit('message', req.body);
       res.sendStatus(200);
-    }
-  });
+    })
+    .catch((err) => {
+      res.sendStatus(500);
+      console.error(err);
+    });
 });
 
 mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
@@ -42,3 +53,4 @@ mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
 var server = http.listen(3000, () => {
   console.log('server started on port', server.address().port);
 });
+
