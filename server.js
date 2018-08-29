@@ -25,25 +25,22 @@ app.get('/messages', (req, res) => {
   });
 });
 
-app.post('/messages', (req, res) => {
-  const message = new Message(req.body);
-  message.save()
-    .then(() => {
-      console.log('Message Saved');
-      return Message.findOne({message: 'badword'});
-    })
-    .then(censored => {
-      if (censored) {
-        console.log(censored);
-        return Message.remove({_id: censored._id});
-      }
-      io.emit('message', req.body);
-      res.sendStatus(200);
-    })
-    .catch((err) => {
+app.post('/messages', async (req, res) => {
+  try {
+    const message = new Message(req.body);
+    const savedMessage = await message.save();
+    console.log('Message Saved');
+    const censored = await Message.findOne({message: 'badword'});
+    if (censored) {
+      await Message.remove({_id: censored._id});
+    } else {
+        io.emit('message', req.body);
+        res.sendStatus(200);
+    }
+  } catch (error) {
       res.sendStatus(500);
-      console.error(err);
-    });
+      return console.error(error);
+    }
 });
 
 mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
